@@ -10,6 +10,10 @@ from logger import setup_logger
 db = DatabaseManager()
 logger = setup_logger()
 
+# Diccionario para rastrear errores consecutivos por categoría
+errores_consecutivos = {}
+fecha_ultima_limpieza = None
+
 # Configuración de categorías a scrapear de Lider
 CATEGORIAS_LIDER = [
     {"nombre": "Lider - TVs", "cat_id": "66849718_44699651", "sort": "best_match"},
@@ -44,8 +48,16 @@ def revisar_tienda(store_config):
     
     if not productos:
         logger.info(f"[SKIP] {store_name}: No se obtuvieron productos.")
+        # Incrementamos contador de errores para esta categoría
+        errores_consecutivos[store_name] = errores_consecutivos.get(store_name, 0) + 1
+        
+        if errores_consecutivos[store_name] == 3:
+            logger.error(f"¡CRÍTICO! {store_name} ha fallado 3 veces consecutivas.")
+            enviar_alerta_telegram(f"⚠️ <b>Error persistente en {store_name}</b>\nEl scraper no está devolviendo productos después de 3 intentos.")
         return
 
+    # Si llegamos aquí, el scrape fue exitoso
+    errores_consecutivos[store_name] = 0
     db.update_last_execution(store_name)
     logger.info(f"[{store_name}] Se encontraron {len(productos)} productos. Analizando...")
     
@@ -101,6 +113,16 @@ if __name__ == "__main__":
         pass
 
     while True:
+        ahora = datetime.now()
+
+        # Limpieza semanal de base de datos (Lunes a las 00:00 - 01:00)
+        if ahora.weekday() == 0 and ahora.hour == 0:
+            if fecha_ultima_limpieza != ahora.date():
+                logger.info("Iniciando limpieza semanal de precios antiguos...")
+                eliminados = db.cleanup_old_prices()
+                logger.info(f"Limpieza completada. Se eliminaron {eliminados} registros antiguos.")
+                fecha_ultima_limpieza = ahora.date()
+
         # Mezclamos las categorías para que no siempre se escaneen en el mismo orden
         categorias_shuffled = CATEGORIAS_LIDER.copy()
         random.shuffle(categorias_shuffled)
@@ -112,6 +134,11 @@ if __name__ == "__main__":
                 time.sleep(random.uniform(10, 30))
             except Exception as e:
                 logger.error(f"Error al revisar {config['nombre']}: {e}")
+                # También contamos excepciones como errores para la notificación
+                name = config['nombre']
+                errores_consecutivos[name] = errores_consecutivos.get(name, 0) + 1
+                if errores_consecutivos[name] == 3:
+                    enviar_alerta_telegram(f"❌ <b>Error crítico en {name}</b>\nSe han producido 3 excepciones seguidas: {str(e)[:100]}")
         
         # Intervalo con "jitter" (variación aleatoria de +/- 2 minutos)
         jitter = random.uniform(-2, 2)

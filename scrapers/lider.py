@@ -29,6 +29,18 @@ class LiderScraper:
             'TS01fffdff': '01ee6f2633a9266cf841fc50a8542bdd57d3e88102be70c3797b3694106daaa589c211f3cdb5e64d1f802de374e880d289c68e8975',
             'TSe3289311027': '08d516a33fab2000f34fbb357c034416e15fefbdfaa5b166d90799bbd838e285d908ad080982ba07087c5f32191130007c71ce5858cac684ce96b0d53a0097d19cfb4d2317ffc30b38e7759faa3b94deee3245d7af7e5d62c55bfc1c03312ea1',
         }
+        import random
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 OPR/109.0.0.0',
+            'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0'
+        ]
+        selected_ua = random.choice(user_agents)
+
         self.headers = {
             'accept': 'application/json',
             'accept-language': 'es-CL',
@@ -37,7 +49,7 @@ class LiderScraper:
             'origin': 'https://www.lider.cl',
             'priority': 'u=1, i',
             'referer': f'https://www.lider.cl/browse/tecno/tv/{self.cat_id}?sort={self.sort}',
-            'sec-ch-ua': '"Brave";v="147", "Not.A/Brand";v="8", "Chromium";v="147"',
+            'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
             'sec-fetch-dest': 'empty',
@@ -45,7 +57,7 @@ class LiderScraper:
             'sec-fetch-site': 'same-origin',
             'sec-gpc': '1',
             'traceparent': '00-18ab30974bb4265ba6d529cd0e9168f0-8972202c3eaca2d8-00',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36',
+            'user-agent': selected_ua,
             'wm_mp': 'true',
             'wm_page_url': f'https://www.lider.cl/browse/tecno/tv/{self.cat_id}?sort={self.sort}',
             'wm_qos.correlation_id': '6_5f0eNO9xZuZMa19IdehCYFvOhjQqgCqilm',

@@ -176,3 +176,49 @@ class DatabaseManager:
                 ON CONFLICT(store_id) DO UPDATE SET last_execution = excluded.last_execution
             ''', (store_id, now))
             conn.commit()
+
+    def cleanup_old_prices(self):
+        """Elimina registros de más de 3 meses, conservando el precio mínimo y el último para cada producto."""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            # Obtener todos los productos
+            cursor.execute("SELECT id FROM products")
+            products = cursor.fetchall()
+            
+            total_deleted = 0
+            for (p_id,) in products:
+                # Identificar el ID del precio mínimo histórico
+                cursor.execute('''
+                    SELECT id FROM price_history 
+                    WHERE product_id = ? 
+                    ORDER BY price ASC, timestamp ASC LIMIT 1
+                ''', (p_id,))
+                min_row = cursor.fetchone()
+                
+                # Identificar el ID del último precio registrado
+                cursor.execute('''
+                    SELECT id FROM price_history 
+                    WHERE product_id = ? 
+                    ORDER BY timestamp DESC LIMIT 1
+                ''', (p_id,))
+                last_row = cursor.fetchone()
+                
+                keep_ids = set()
+                if min_row: keep_ids.add(min_row[0])
+                if last_row: keep_ids.add(last_row[0])
+                
+                if not keep_ids:
+                    continue
+                
+                # Borrar registros antiguos que no sean el mínimo ni el último
+                placeholders = ','.join(['?'] * len(keep_ids))
+                cursor.execute(f'''
+                    DELETE FROM price_history 
+                    WHERE product_id = ? 
+                    AND timestamp < date('now', '-3 months')
+                    AND id NOT IN ({placeholders})
+                ''', (p_id, *list(keep_ids)))
+                total_deleted += cursor.rowcount
+            
+            conn.commit()
+            return total_deleted
