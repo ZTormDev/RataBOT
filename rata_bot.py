@@ -17,7 +17,7 @@ CATEGORIAS_LIDER = [
 ]
 
 # Configuración de tiempo
-INTERVALO_MINUTOS = 30  # Escaneo cada 30 minutos (Equilibrio entre velocidad y seguridad)
+INTERVALO_MINUTOS = 15  # Escaneo cada 30 minutos (Equilibrio entre velocidad y seguridad)
 
 def revisar_tienda(store_config):
     store_name = store_config["nombre"]
@@ -89,6 +89,12 @@ def revisar_tienda(store_config):
 
 if __name__ == "__main__":
     print(f"[BOT] Bot de Ofertas Rata iniciado (Modo Servicio - Intervalo: {INTERVALO_MINUTOS} min).")
+    
+    # Notificación sutil de inicio
+    try:
+        enviar_alerta_telegram("📡 <i>Sistema de monitoreo RataBOT sincronizado.</i>")
+    except:
+        pass
 
     while True:
         for config in CATEGORIAS_LIDER:
