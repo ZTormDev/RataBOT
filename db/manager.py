@@ -66,6 +66,7 @@ class DatabaseManager:
 
     def save_products(self, store_name, products_data):
         store_id = self.get_or_create_store(store_name)
+        changes_detected = False
         
         with self._get_connection() as conn:
             cursor = conn.cursor()
@@ -101,12 +102,14 @@ class DatabaseManager:
                 last_price_row = cursor.fetchone()
                 
                 if not last_price_row or last_price_row[0] != price:
+                    changes_detected = True
                     cursor.execute('''
                         INSERT INTO price_history (product_id, price)
                         VALUES (?, ?)
                     ''', (product_id, price))
             
             conn.commit()
+        return changes_detected
 
     def get_price_stats(self, store_name, external_id):
         """Devuelve el precio anterior y el precio mínimo histórico."""

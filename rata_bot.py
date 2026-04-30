@@ -1,11 +1,14 @@
 import time
+import random
 from datetime import datetime, timedelta
 from scrapers.lider import LiderScraper
 from notifier import enviar_alerta_telegram
 from db.manager import DatabaseManager
+from logger import setup_logger
 
-# Inicializamos el gestor de base de datos
+# Inicializamos el gestor de base de datos y el logger
 db = DatabaseManager()
+logger = setup_logger()
 
 # Configuración de categorías a scrapear de Lider
 CATEGORIAS_LIDER = [
@@ -17,36 +20,42 @@ CATEGORIAS_LIDER = [
 ]
 
 # Configuración de tiempo
-INTERVALO_MINUTOS = 15  # Escaneo cada 30 minutos (Equilibrio entre velocidad y seguridad)
+INTERVALO_MINUTOS = 15
 
 def revisar_tienda(store_config):
+    # Aseguramos que el logger use el archivo del día actual
+    global logger
+    logger = setup_logger()
+    
     store_name = store_config["nombre"]
     cat_id = store_config["cat_id"]
     sort = store_config["sort"]
     
-    # Verificamos si han pasado más de 30 minutos desde la última vez para ESTA categoría
     ultima_vez = db.get_last_execution(store_name)
     if ultima_vez:
         tiempo_pasado = datetime.now() - ultima_vez
         if tiempo_pasado < timedelta(minutes=INTERVALO_MINUTOS):
             minutos_restantes = INTERVALO_MINUTOS - (tiempo_pasado.total_seconds() / 60)
-            print(f"[WAIT] {store_name}: Proximo escaneo en {minutos_restantes:.1f} min.")
+            logger.info(f"[WAIT] {store_name}: Proximo escaneo en {minutos_restantes:.1f} min.")
             return
 
-    # Inicializamos el scraper para esta categoría específica
     scraper = LiderScraper(cat_id=cat_id, sort=sort)
     productos = scraper.scrape()
     
     if not productos:
+        logger.info(f"[SKIP] {store_name}: No se obtuvieron productos.")
         return
 
-    # Si hubo productos (scrape exitoso), actualizamos la fecha de ejecución
     db.update_last_execution(store_name)
-
-    print(f"[INFO] [{store_name}] Se encontraron {len(productos)} productos. Analizando reglas...")
+    logger.info(f"[{store_name}] Se encontraron {len(productos)} productos. Analizando...")
     
-    # Guardamos todos los productos en la base de datos
-    db.save_products(store_name, productos)
+    # Guardamos y detectamos si hubo cambios de precios
+    hay_cambios = db.save_products(store_name, productos)
+    
+    if hay_cambios:
+        logger.info(f"[{store_name}] Cambio de precios detectado.")
+    else:
+        logger.info(f"[{store_name}] Sin cambios en los precios.")
 
     for p in productos:
         nombre = p.get("name")
@@ -58,16 +67,12 @@ def revisar_tienda(store_config):
         if precio <= 0:
             continue
 
-        # Obtener estadísticas históricas
         stats = db.get_price_stats(store_name, ext_id)
-        
-        # Si no hay historial previo (producto nuevo), no alertamos
         if not stats or not stats.get("previous_price"):
             continue
 
         precio_anterior = stats["previous_price"]
         
-        # Solo alertamos si el precio actual es menor al anterior
         if precio < precio_anterior:
             descuento = ((precio_anterior - precio) / precio_anterior) * 100
             
@@ -85,23 +90,31 @@ def revisar_tienda(store_config):
                     f"🛒 <a href='{url}'>¡CORRE POR EL TUYO!</a>"
                 )
                 enviar_alerta_telegram(mensaje_telegram)
-                print(f"[OFERTA] GANGA BRUTAL EN {store_name}: {nombre} ({descuento:.0f}% OFF)")
+                logger.info(f"[OFERTA] GANGA EN {store_name}: {nombre} ({descuento:.0f}% OFF)")
 
 if __name__ == "__main__":
-    print(f"[BOT] Bot de Ofertas Rata iniciado (Modo Servicio - Intervalo: {INTERVALO_MINUTOS} min).")
+    logger.info(f"Bot de Ofertas Rata iniciado (Intervalo base: {INTERVALO_MINUTOS} min).")
     
-    # Notificación sutil de inicio
     try:
         enviar_alerta_telegram("📡 <i>Sistema de monitoreo RataBOT sincronizado.</i>")
     except:
         pass
 
     while True:
-        for config in CATEGORIAS_LIDER:
+        # Mezclamos las categorías para que no siempre se escaneen en el mismo orden
+        categorias_shuffled = CATEGORIAS_LIDER.copy()
+        random.shuffle(categorias_shuffled)
+        
+        for config in categorias_shuffled:
             try:
                 revisar_tienda(config)
+                # Pausa aleatoria entre categorías (entre 10 y 30 segundos)
+                time.sleep(random.uniform(10, 30))
             except Exception as e:
-                print(f"[ERROR] Al revisar {config['nombre']}: {e}")
+                logger.error(f"Error al revisar {config['nombre']}: {e}")
         
-        print(f"[SLEEP] Ciclo de escaneo completado. Durmiendo {INTERVALO_MINUTOS} minutos...")
-        time.sleep(INTERVALO_MINUTOS * 60)
+        # Intervalo con "jitter" (variación aleatoria de +/- 2 minutos)
+        jitter = random.uniform(-2, 2)
+        espera_final = max(1, (INTERVALO_MINUTOS + jitter))
+        logger.info(f"Ciclo completado. Durmiendo {espera_final:.1f} minutos...")
+        time.sleep(espera_final * 60)

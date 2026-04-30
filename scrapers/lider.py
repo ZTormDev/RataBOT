@@ -323,8 +323,9 @@ class LiderScraper:
                     # Verificar si hay más páginas según el conteo total (opcional)
                     # O simplemente seguir hasta que no vengan items
                     page += 1
-                    # Pequeña pausa para no saturar
-                    time.sleep(1)
+                    # Pausa aleatoria para evitar detección
+                    import random
+                    time.sleep(random.uniform(2, 5))
 
             except Exception as e:
                 print(f"❌ Error durante el scrape: {e}")
