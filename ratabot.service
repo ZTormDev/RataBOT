@@ -8,6 +8,8 @@ ExecStart=/home/ztorm/RataBOT/venv/bin/python -u /home/ztorm/RataBOT/rata_bot.py
 Restart=always
 RestartSec=10
 User=ztorm
+KillSignal=SIGINT
+TimeoutStopSec=10
 
 StandardOutput=append:/home/ztorm/RataBOT/bot.log
 StandardError=append:/home/ztorm/RataBOT/bot.log

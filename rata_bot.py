@@ -1,7 +1,10 @@
 import time
 import random
+import signal
+import sys
 from datetime import datetime, timedelta
 from scrapers.lider import LiderScraper
+from scrapers.abcdin import AbcdinScraper
 from notifier import enviar_alerta_telegram
 from db.manager import DatabaseManager
 from logger import setup_logger
@@ -10,18 +13,35 @@ from logger import setup_logger
 db = DatabaseManager()
 logger = setup_logger()
 
+def manejar_salida(sig, frame):
+    logger.info("🛑 Señal de parada recibida. Cerrando RataBOT de forma segura...")
+    sys.exit(0)
+
+# Registrar señales de interrupción
+signal.signal(signal.SIGINT, manejar_salida)
+signal.signal(signal.SIGTERM, manejar_salida)
+
 # Diccionario para rastrear errores consecutivos por categoría
 errores_consecutivos = {}
 fecha_ultima_limpieza = None
 
 # Configuración de categorías a scrapear de Lider
 CATEGORIAS_LIDER = [
-    {"nombre": "Lider - TVs", "cat_id": "66849718_44699651", "sort": "best_match"},
-    {"nombre": "Lider - Consolas", "cat_id": "66849718_80980590_45869788", "sort": "best_match"},
-    {"nombre": "Lider - Smartphones", "cat_id": "34388900_60412644_48497435", "sort": "best_match"},
-    {"nombre": "Lider - Notebooks", "cat_id": "89057520_72573679_94067303", "sort": "best_match"},
-    {"nombre": "Lider - Tablets", "cat_id": "89057520_72573679_62826909", "sort": "best_match"}
+    {"nombre": "Lider - TVs", "cat_id": "66849718_44699651", "sort": "best_match", "tienda": "Lider"},
+    {"nombre": "Lider - Consolas", "cat_id": "66849718_80980590_45869788", "sort": "best_match", "tienda": "Lider"},
+    {"nombre": "Lider - Smartphones", "cat_id": "34388900_60412644_48497435", "sort": "best_match", "tienda": "Lider"},
+    {"nombre": "Lider - Notebooks", "cat_id": "89057520_72573679_94067303", "sort": "best_match", "tienda": "Lider"},
+    {"nombre": "Lider - Tablets", "cat_id": "89057520_72573679_62826909", "sort": "best_match", "tienda": "Lider"}
 ]
+
+# Configuración de categorías a scrapear de Abcdin
+CATEGORIAS_ABCDIN = [
+    {"nombre": "Abcdin - Smart TVs", "url": "https://www.abc.cl/tecnologia/televisores/smart-tv/", "tienda": "Abcdin"},
+    {"nombre": "Abcdin - Smartphones", "url": "https://www.abc.cl/tecnologia/telefonia/smartphones/", "tienda": "Abcdin"},
+    {"nombre": "Abcdin - Notebooks", "url": "https://www.abc.cl/tecnologia/computacion/notebooks/", "tienda": "Abcdin"}
+]
+
+TODAS_LAS_CATEGORIAS = CATEGORIAS_LIDER + CATEGORIAS_ABCDIN
 
 # Configuración de tiempo
 INTERVALO_MINUTOS = 15
@@ -32,8 +52,7 @@ def revisar_tienda(store_config):
     logger = setup_logger()
     
     store_name = store_config["nombre"]
-    cat_id = store_config["cat_id"]
-    sort = store_config["sort"]
+    tienda = store_config["tienda"]
     
     ultima_vez = db.get_last_execution(store_name)
     if ultima_vez:
@@ -43,7 +62,15 @@ def revisar_tienda(store_config):
             logger.info(f"[WAIT] {store_name}: Proximo escaneo en {minutos_restantes:.1f} min.")
             return
 
-    scraper = LiderScraper(cat_id=cat_id, sort=sort)
+    # Inicializamos el scraper correspondiente
+    if tienda == "Lider":
+        scraper = LiderScraper(cat_id=store_config["cat_id"], sort=store_config["sort"])
+    elif tienda == "Abcdin":
+        scraper = AbcdinScraper(category_url=store_config["url"])
+    else:
+        logger.error(f"Tienda desconocida: {tienda}")
+        return
+
     productos = scraper.scrape()
     
     if not productos:
@@ -124,7 +151,7 @@ if __name__ == "__main__":
                 fecha_ultima_limpieza = ahora.date()
 
         # Mezclamos las categorías para que no siempre se escaneen en el mismo orden
-        categorias_shuffled = CATEGORIAS_LIDER.copy()
+        categorias_shuffled = TODAS_LAS_CATEGORIAS.copy()
         random.shuffle(categorias_shuffled)
         
         for config in categorias_shuffled:

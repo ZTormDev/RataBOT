@@ -1,0 +1,35 @@
+[20:03] Bot de Ofertas Rata iniciado (Intervalo base: 15 min).
+✅ Alerta enviada a Telegram con éxito.
+[PAGINA] Scrapeando pagina 1 de Lider (Cat: 89057520_72573679_94067303)...
+[ERROR] En la peticion (Status 412)
+[DEBUG] Respuesta del servidor: {"redirectUrl":"/blocked?url=L2Jyb3dzZS90ZWNuby90di84OTA1NzUyMF83MjU3MzY3OV85NDA2NzMwMw==\u0026uuid=6cb6d700-44b4-11f1-9973-65fe62c3ff10\u0026vid=6784431c-44b4-11f1-8ba9-b722baa50115\u0026g=b","appId":"PXwySh5eKD","jsClientSrc":"/px/PXwySh5eKD/init.js","firstPartyEnabled":true,"vid":"6784431c-44b4-11f1-8ba9-b722baa50115","uuid":"6cb6d700-44b4-11f1-9973-65fe62c3ff10","hostUrl":"/px/PXwySh5eKD/xhr","blockScript":"/px/PXwySh5eKD/captcha/captcha.js?a=c\u0026m=0\u0026u=6cb6d700-44b4-11f1-9973-65fe62c
+[20:03] [SKIP] Lider - Notebooks: No se obtuvieron productos.
+[20:03] [WAIT] Lider - TVs: Proximo escaneo en 7.1 min.
+[PAGINA] Scrapeando pagina 1 de Lider (Cat: 66849718_80980590_45869788)...
+[ERROR] En la peticion (Status 412)
+[DEBUG] Respuesta del servidor: {"redirectUrl":"/blocked?url=L2Jyb3dzZS90ZWNuby90di82Njg0OTcxOF84MDk4MDU5MF80NTg2OTc4OA==\u0026uuid=6cb6d700-44b4-11f1-9973-65fe62c3ff10\u0026vid=6784431c-44b4-11f1-8ba9-b722baa50115\u0026g=b","appId":"PXwySh5eKD","jsClientSrc":"/px/PXwySh5eKD/init.js","firstPartyEnabled":true,"vid":"6784431c-44b4-11f1-8ba9-b722baa50115","uuid":"6cb6d700-44b4-11f1-9973-65fe62c3ff10","hostUrl":"/px/PXwySh5eKD/xhr","blockScript":"/px/PXwySh5eKD/captcha/captcha.js?a=c\u0026m=0\u0026u=6cb6d700-44b4-11f1-9973-65fe62c
+[20:03] [SKIP] Lider - Consolas: No se obtuvieron productos.
+[PAGINA] Scrapeando pagina 1 de Lider (Cat: 34388900_60412644_48497435)...
+[ERROR] En la peticion (Status 412)
+[DEBUG] Respuesta del servidor: {"redirectUrl":"/blocked?url=L2Jyb3dzZS90ZWNuby90di8zNDM4ODkwMF82MDQxMjY0NF80ODQ5NzQzNQ==\u0026uuid=6cb6d700-44b4-11f1-9973-65fe62c3ff10\u0026vid=6784431c-44b4-11f1-8ba9-b722baa50115\u0026g=b","appId":"PXwySh5eKD","jsClientSrc":"/px/PXwySh5eKD/init.js","firstPartyEnabled":true,"vid":"6784431c-44b4-11f1-8ba9-b722baa50115","uuid":"6cb6d700-44b4-11f1-9973-65fe62c3ff10","hostUrl":"/px/PXwySh5eKD/xhr","blockScript":"/px/PXwySh5eKD/captcha/captcha.js?a=c\u0026m=0\u0026u=6cb6d700-44b4-11f1-9973-65fe62c
+[20:04] [SKIP] Lider - Smartphones: No se obtuvieron productos.
+[20:04] [SKIP] Abcdin - Notebooks: No se obtuvieron productos.
+[20:04] [Abcdin - Smart TVs] Se encontraron 100 productos. Analizando...
+[20:04] [Abcdin - Smart TVs] Cambio de precios detectado.
+[20:04] 🛑 Señal de parada recibida. Cerrando RataBOT de forma segura...
+[20:05] Bot de Ofertas Rata iniciado (Intervalo base: 15 min).
+✅ Alerta enviada a Telegram con éxito.
+[20:05] [WAIT] Abcdin - Smart TVs: Proximo escaneo en 14.9 min.
+[PAGINA] Scrapeando pagina 1 de Lider (Cat: 89057520_72573679_94067303)...
+[ERROR] En la peticion (Status 412)
+[DEBUG] Respuesta del servidor: {"redirectUrl":"/blocked?url=L2Jyb3dzZS90ZWNuby90di84OTA1NzUyMF83MjU3MzY3OV85NDA2NzMwMw==\u0026uuid=6cb6d700-44b4-11f1-9973-65fe62c3ff10\u0026vid=6784431c-44b4-11f1-8ba9-b722baa50115\u0026g=b","appId":"PXwySh5eKD","jsClientSrc":"/px/PXwySh5eKD/init.js","firstPartyEnabled":true,"vid":"6784431c-44b4-11f1-8ba9-b722baa50115","uuid":"6cb6d700-44b4-11f1-9973-65fe62c3ff10","hostUrl":"/px/PXwySh5eKD/xhr","blockScript":"/px/PXwySh5eKD/captcha/captcha.js?a=c\u0026m=0\u0026u=6cb6d700-44b4-11f1-9973-65fe62c
+[20:05] [SKIP] Lider - Notebooks: No se obtuvieron productos.
+[PAGINA] Scrapeando pagina 1 de Lider (Cat: 66849718_80980590_45869788)...
+[ERROR] En la peticion (Status 412)
+[DEBUG] Respuesta del servidor: {"redirectUrl":"/blocked?url=L2Jyb3dzZS90ZWNuby90di82Njg0OTcxOF84MDk4MDU5MF80NTg2OTc4OA==\u0026uuid=6cb6d700-44b4-11f1-9973-65fe62c3ff10\u0026vid=6784431c-44b4-11f1-8ba9-b722baa50115\u0026g=b","appId":"PXwySh5eKD","jsClientSrc":"/px/PXwySh5eKD/init.js","firstPartyEnabled":true,"vid":"6784431c-44b4-11f1-8ba9-b722baa50115","uuid":"6cb6d700-44b4-11f1-9973-65fe62c3ff10","hostUrl":"/px/PXwySh5eKD/xhr","blockScript":"/px/PXwySh5eKD/captcha/captcha.js?a=c\u0026m=0\u0026u=6cb6d700-44b4-11f1-9973-65fe62c
+[20:05] [SKIP] Lider - Consolas: No se obtuvieron productos.
+[20:06] [SKIP] Abcdin - Smartphones: No se obtuvieron productos.
+[PAGINA] Scrapeando pagina 1 de Lider (Cat: 34388900_60412644_48497435)...
+[ERROR] En la peticion (Status 412)
+[DEBUG] Respuesta del servidor: {"redirectUrl":"/blocked?url=L2Jyb3dzZS90ZWNuby90di8zNDM4ODkwMF82MDQxMjY0NF80ODQ5NzQzNQ==\u0026uuid=6cb6d700-44b4-11f1-9973-65fe62c3ff10\u0026vid=6784431c-44b4-11f1-8ba9-b722baa50115\u0026g=b","appId":"PXwySh5eKD","jsClientSrc":"/px/PXwySh5eKD/init.js","firstPartyEnabled":true,"vid":"6784431c-44b4-11f1-8ba9-b722baa50115","uuid":"6cb6d700-44b4-11f1-9973-65fe62c3ff10","hostUrl":"/px/PXwySh5eKD/xhr","blockScript":"/px/PXwySh5eKD/captcha/captcha.js?a=c\u0026m=0\u0026u=6cb6d700-44b4-11f1-9973-65fe62c
+[20:06] [SKIP] Lider - Smartphones: No se obtuvieron productos.
